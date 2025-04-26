@@ -3,7 +3,10 @@ CREATE TABLE users (
     full_name VARCHAR NOT NULL,
     email VARCHAR UNIQUE NOT NULL,
     password VARCHAR,
-    auth_provider auth_provider_type NOT NULL,
+    auth_provider VARCHAR NOT NULL,
+    photo_url TEXT NOT NULL,
+    is_premium bool not null default false,
+    expired_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
