@@ -21,6 +21,8 @@ type Env struct {
 	StorageURL    string `env:"STORAGE_URL,required"`
 	StorageToken  string `env:"STORAGE_TOKEN,required"`
 	StorageBucket string `env:"STORAGE_BUCKET,required"`
+
+	MidtransKey string `env:"MIDTRANS_KEY,required"`
 }
 
 func LoadEnv() (*Env, error) {
