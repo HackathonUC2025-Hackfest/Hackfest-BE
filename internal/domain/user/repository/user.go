@@ -11,9 +11,9 @@ import (
 
 func (r *userRepository) CreateUser(ctx context.Context, data user.Table) error {
 	query := `INSERT INTO users (
-		id, full_name, email, password, auth_provider
+		id, full_name, email, password, auth_provider, photo_url
 	) VALUES (
-		:id, :full_name, :email, :password, :auth_provider
+		:id, :full_name, :email, :password, :auth_provider, :photo_url
 	)`
 
 	_, err := r.q.NamedExecContext(ctx, query, data)
@@ -31,7 +31,7 @@ func (r *userRepository) CreateUser(ctx context.Context, data user.Table) error 
 
 func (r *userRepository) GetAccountByEmail(ctx context.Context, data *user.Table) error {
 	query := `SELECT 
-	id, full_name, email, password, auth_provider, created_at, updated_at
+	id, full_name, email, password, auth_provider, photo_url, created_at, updated_at
 	FROM users
 	WHERE email = $1
 	`

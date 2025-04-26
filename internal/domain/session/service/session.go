@@ -33,6 +33,7 @@ func (s *authService) Register(ctx context.Context, request session.RegisterRequ
 		Email:        request.Email,
 		Password:     hashedPassword,
 		AuthProvider: user.AuthProviderEmail,
+		PhotoUrl:     "https://htnqkjejgcovkehhtqjw.supabase.co/storage/v1/object/public/hackfest-uhuy//photo_profile.jpg",
 	}
 
 	err = userRepository.CreateUser(ctx, user)
