@@ -1,0 +1,34 @@
+name: Hackfest HUHA
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to Server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} -p 22 << 'EOF'
+            echo "Change directory"
+            cd ~/app/Hackfest-BE
+
+            echo "Git stash"
+            git stash
+            git pull origin main
+
+            echo "Rebuild"
+            make compose-up
+            make migrate-up
+
+          EOF
