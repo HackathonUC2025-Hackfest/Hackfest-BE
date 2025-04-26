@@ -20,7 +20,9 @@ var (
 )
 
 type Claims struct {
-	UserID string `json:"user_id"`
+	UserID           string    `json:"user_id"`
+	IsPremium        bool      `json:"is_premium"`
+	PremiumExpiredAt time.Time `json:"premium_expired_at"`
 	jwt.RegisteredClaims
 }
 
@@ -36,9 +38,11 @@ func New(secret string) *JWTStruct {
 
 func (j *JWTStruct) Encode(data *user.Table) (string, error) {
 	claims := &Claims{
-		UserID: data.ID.String(),
+		UserID:           data.ID.String(),
+		IsPremium:        data.IsPremium,
+		PremiumExpiredAt: data.ExpiredAt,
 		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    "glamify",
+			Issuer:    "nusa",
 			Subject:   "authentication",
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(1 * time.Hour)),
