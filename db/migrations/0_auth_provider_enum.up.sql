@@ -1,0 +1,1 @@
+CREATE TYPE auth_provider_type AS ENUM ('email', 'google');
