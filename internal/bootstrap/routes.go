@@ -1,6 +1,9 @@
 package bootstrap
 
 import (
+	"github.com/HackathonUC2025-Hackfest/Hackfest-BE/internal/domain/local/handler/rest"
+	localRepository "github.com/HackathonUC2025-Hackfest/Hackfest-BE/internal/domain/local/repository"
+	localService "github.com/HackathonUC2025-Hackfest/Hackfest-BE/internal/domain/local/service"
 	sessionHandler "github.com/HackathonUC2025-Hackfest/Hackfest-BE/internal/domain/session/handler/rest"
 	sessionRepository "github.com/HackathonUC2025-Hackfest/Hackfest-BE/internal/domain/session/repository"
 	sessionService "github.com/HackathonUC2025-Hackfest/Hackfest-BE/internal/domain/session/service"
@@ -18,12 +21,15 @@ func (app *App) InitHandlers() {
 func (app *App) registerRoutes(jwt *jwt.JWTStruct) {
 	userRepository := userRepository.New(app.postgres)
 	sessionRepository := sessionRepository.New(app.postgres)
+	localRepository := localRepository.New(app.postgres)
 
 	authService := sessionService.New(userRepository, sessionRepository, jwt)
+	localService := localService.New(localRepository, app.payment.snap, app.payment.coreapi)
 
 	authHandler := sessionHandler.New(authService, app.validator)
+	localHandler := rest.New(localService, app.validator, app.jwt)
 
-	app.handlers = append(app.handlers, authHandler)
+	app.handlers = append(app.handlers, authHandler, localHandler)
 }
 
 func (app *App) MountRoutes() {

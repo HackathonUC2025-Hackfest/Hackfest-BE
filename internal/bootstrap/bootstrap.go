@@ -10,6 +10,7 @@ import (
 	"github.com/HackathonUC2025-Hackfest/Hackfest-BE/internal/infra/db"
 	"github.com/HackathonUC2025-Hackfest/Hackfest-BE/internal/infra/http"
 	"github.com/HackathonUC2025-Hackfest/Hackfest-BE/internal/infra/logger"
+	"github.com/HackathonUC2025-Hackfest/Hackfest-BE/internal/infra/payment"
 	"github.com/HackathonUC2025-Hackfest/Hackfest-BE/internal/infra/storage"
 	"github.com/HackathonUC2025-Hackfest/Hackfest-BE/pkg/jwt"
 	_validator "github.com/HackathonUC2025-Hackfest/Hackfest-BE/pkg/validator"
@@ -17,6 +18,8 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/jmoiron/sqlx"
+	"github.com/midtrans/midtrans-go/coreapi"
+	"github.com/midtrans/midtrans-go/snap"
 	"github.com/rs/zerolog/log"
 )
 
@@ -28,6 +31,11 @@ type Handler interface {
 	Mount(router fiber.Router)
 }
 
+type paymentMidtrans struct {
+	snap    snap.Client
+	coreapi coreapi.Client
+}
+
 type App struct {
 	http      *fiber.App
 	config    *config.Env
@@ -36,6 +44,7 @@ type App struct {
 	handlers  []Handler
 	jwt       *jwt.JWTStruct
 	storage   *supabasestorageuploader.Client
+	payment   paymentMidtrans
 }
 
 func Initialize() error {
@@ -53,6 +62,7 @@ func Initialize() error {
 	val := _validator.New()
 	http := http.NewFiber()
 	storage := storage.New(env.StorageURL, env.StorageToken, env.StorageBucket)
+	pSnap, pCore := payment.New(env.MidtransKey)
 
 	app = &App{
 		http:      http,
@@ -61,6 +71,10 @@ func Initialize() error {
 		validator: val,
 		jwt:       jwt,
 		storage:   storage,
+		payment: paymentMidtrans{
+			snap:    pSnap,
+			coreapi: pCore,
+		},
 	}
 
 	logger.New()
