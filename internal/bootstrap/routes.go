@@ -35,6 +35,6 @@ func (app *App) MountRoutes() {
 
 func (app *App) registerHealthCheck() {
 	app.http.Get("/health", func(ctx *fiber.Ctx) error {
-		return ctx.SendString("Everything is good! 🧘")
+		return ctx.SendString("Everything is good!")
 	})
 }
